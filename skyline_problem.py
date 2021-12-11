@@ -13,29 +13,32 @@ def max_rectangle_n2(heights):
 
 
 def skyline(heights):
-    n = len(heights)
     stack = []
-    max_square = 0
+    max_area = 0
+    index = 0
+    while index < len(heights):
+        if (not stack) or (heights[stack[-1]] <= heights[index]):
+            stack.append(index)
+            index += 1
+        else:
+            top_of_stack = stack.pop()
+            area = (heights[top_of_stack] *
+                    ((index - stack[-1] - 1)
+                     if stack else index))
+            max_area = max(max_area, area)
 
-    for i in range(n):
-        h = heights[i]
-        while stack and heights[stack[-1]] >= h:
-            square = (i - stack[-1]) * heights[stack[-1]]
-            max_square = max(square, max_square)
-            stack.pop()
-        if len(stack) == 0:
-            square = (i + 1) * h
-            max_square = max(square, max_square)
-        stack.append(i)
     while stack:
-        square = (len(heights) - stack[-1]) * heights[stack[-1]]
-        max_square = max(square, max_square)
-        stack.pop()
-
-    return max_square
+        top_of_stack = stack.pop()
+        area = (heights[top_of_stack] *
+                ((index - stack[-1] - 1)
+                 if stack else index))
+        max_area = max(max_area, area)
+    return max_area
 
 
 if __name__ == "__main__":
     heights = [2, 5, 7, 1, 3, 8, 9, 4]
     print(max_rectangle_n2(heights))
     print(skyline(heights))
+    print(max_rectangle_n2([1, 0, 5, 3, 5, 1]))
+    print(skyline([1, 0, 5, 3, 5, 1]))
